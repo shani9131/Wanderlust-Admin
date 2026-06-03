@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payments - Travel Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f3f4f6; color: #333; }
+
+        /* Sidebar */
+        .sidebar { width: 250px; background-color: #1e293b; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
+        .sidebar-header { padding: 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #334155; }
+        .sidebar-menu { flex: 1; padding-top: 10px; }
+        .sidebar-menu a { display: block; padding: 15px 20px; color: #cbd5e1; text-decoration: none; font-size: 15px; border-left: 4px solid transparent; transition: 0.2s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: #334155; color: #ffffff; border-left: 4px solid #3b82f6; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .top-navbar { background-color: #ffffff; padding: 15px 30px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;}
+        
+        /* Payment Container */
+        .payment-container { display: flex; gap: 30px; padding: 40px; justify-content: center; align-items: flex-start;}
+        
+        /* Left: Invoice Details */
+        .invoice-card { background: white; padding: 30px; border-radius: 8px; border: 1px solid #e5e7eb; flex: 1; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .invoice-card h3 { color: #111827; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; }
+        .invoice-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 15px; }
+        .invoice-total { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 15px; border-top: 2px dashed #e5e7eb; font-size: 20px; font-weight: bold; color: #10b981; }
+
+        /* Right: Credit Card Form */
+        .card-form { background: white; padding: 30px; border-radius: 8px; border: 1px solid #e5e7eb; flex: 1; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card-form h3 { color: #111827; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;}
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 13px; color: #4b5563; font-weight: 600; margin-bottom: 8px; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; outline: none; }
+        .input-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        
+        .row { display: flex; gap: 15px; }
+        .row .input-group { flex: 1; }
+
+        .btn-pay { background-color: #2563eb; color: white; border: none; padding: 15px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        .btn-pay:hover { background-color: #1d4ed8; }
+
+        /* Loader Animation */
+        .loader { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Secure Badge */
+        .secure-badge { text-align: center; margin-top: 15px; font-size: 12px; color: #6b7280; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">Wanderlust Admin</div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="view_customers.html">👥 Manage Customers</a>
+            <a href="book_hotel.html">🏨 Book Hotels</a>
+            <a href="book_package.html">🎒 Tour Packages</a>
+            <a href="view_bookings.html">📄 View All Bookings</a>
+            <a href="route_optimizer.html">🗺️ Smart Route AI</a>
+            <a href="payments.html" class="active">💳 Payments</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-navbar">
+            <h2 style="font-size: 20px; color: #111827;">Secure Checkout Portal</h2>
+        </div>
+
+        <div class="payment-container">
+            <div class="invoice-card">
+                <h3>🔍 Find Pending Bill</h3>
+                <div class="input-group">
+                    <label>Enter Username to fetch bill</label>
+                    <input type="text" id="searchUser" placeholder="e.g., Rahul1" oninput="simulateFetchBill()">
+                </div>
+                
+                <div id="billDetails" style="display: none; margin-top: 25px;">
+                    <h3 style="font-size: 16px;">Order Summary</h3>
+                    <div class="invoice-item">
+                        <span style="color: #6b7280;">Service Type:</span>
+                        <span style="font-weight: 500;">Premium Tour Package</span>
+                    </div>
+                    <div class="invoice-item">
+                        <span style="color: #6b7280;">Taxes & Fees:</span>
+                        <span style="font-weight: 500;">₹ 1,500</span>
+                    </div>
+                    <div class="invoice-total">
+                        <span>Total Payable:</span>
+                        <span id="amountToPay">₹ 33,500</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-form">
+                <h3>💳 Credit / Debit Card <span>🔒 Secure</span></h3>
+                <form id="paymentForm">
+                    <div class="input-group">
+                        <label>Cardholder Name</label>
+                        <input type="text" placeholder="Name on card" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Card Number</label>
+                        <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
+                    </div>
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Expiry Date</label>
+                            <input type="text" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div class="input-group">
+                            <label>CVV</label>
+                            <input type="password" placeholder="•••" maxlength="3" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-pay" id="payBtn">
+                        <span id="btnText">Pay Now</span>
+                        <div class="loader" id="btnLoader"></div>
+                    </button>
+                    <div class="secure-badge">
+                        🔒 Payments are secured by 256-bit SSL encryption
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dummy function to simulate fetching a bill when username is typed
+        function simulateFetchBill() {
+            const input = document.getElementById('searchUser').value;
+            const billSection = document.getElementById('billDetails');
+            
+            if(input.length > 3) {
+                billSection.style.display = 'block'; // Show bill details
+            } else {
+                billSection.style.display = 'none'; // Hide if input is cleared
+            }
+        }
+
+        // Payment Processing Animation Simulation
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const payBtn = document.getElementById('payBtn');
+
+            // Start Loading state
+            btnText.innerText = 'Processing...';
+            btnLoader.style.display = 'block';
+            payBtn.style.backgroundColor = '#9ca3af'; // Gray out button
+            payBtn.disabled = true;
+
+            // Wait 2.5 seconds to simulate bank server connection
+            setTimeout(() => {
+                // Success State
+                // Success State (Simulated)
+                btnLoader.style.display = 'none';
+                btnText.innerText = '✅ Payment Successful!';
+                payBtn.style.backgroundColor = '#10b981'; 
+
+                // Database mein status update karne ke liye backend ko call karna
+                const username = document.getElementById('searchUser').value;
+
+                // Hotel ka payment status update karo
+                fetch(`http://localhost:8081/api/hotels/pay/${username}`, { method: 'PUT' });
+                // Package ka payment status update karo
+                fetch(`http://localhost:8081/api/packages/pay/${username}`, { method: 'PUT' });
+
+                setTimeout(() => {
+                    alert(`Transaction TXN${Math.floor(Math.random() * 900000)} Successful!\nStatus updated to CONFIRMED in database.`);
+                    document.getElementById('paymentForm').reset();
+                    document.getElementById('searchUser').value = '';
+                    document.getElementById('billDetails').style.display = 'none';
+
+                    btnText.innerText = 'Pay Now';
+                    payBtn.style.backgroundColor = '#2563eb';
+                    payBtn.disabled = false;
+                }, 1000);
+
+            }, 2500);
+        });
+    </script>
+</body>
+</html>

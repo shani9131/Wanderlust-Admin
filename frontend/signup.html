@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Wanderlust Admin</title>
+    <style>
+        /* Same clean CSS as login for consistency */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f3f4f6; align-items: center; justify-content: center;}
+
+        .signup-box { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 500px; }
+        .signup-box h2 { font-size: 24px; color: #111827; margin-bottom: 5px; text-align: center;}
+        .signup-box p { color: #6b7280; font-size: 14px; text-align: center; margin-bottom: 25px;}
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+        .input-group input, .input-group select { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
+        
+        .row { display: flex; gap: 15px; }
+        .row .input-group { flex: 1; }
+
+        .btn-primary { width: 100%; background: #10b981; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        .btn-primary:hover { background: #059669; }
+
+        .login-link { text-align: center; margin-top: 20px; font-size: 14px; color: #6b7280; }
+        .login-link a { color: #3b82f6; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="signup-box">
+        <h2>Create Admin Account</h2>
+        <p>Register new staff to access the portal</p>
+
+        <form id="signupForm">
+            <div class="row">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <div class="input-group">
+                <label>Security Question</label>
+                <select id="securityQuestion">
+                    <option>What is your pet's name?</option>
+                    <option>In what city were you born?</option>
+                    <option>What was your first car?</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Answer</label>
+                <input type="text" id="answer" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="index.html">Sign In here</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = {
+                username: document.getElementById('username').value,
+                name: document.getElementById('name').value,
+                password: document.getElementById('password').value,
+                securityQuestion: document.getElementById('securityQuestion').value,
+                answer: document.getElementById('answer').value
+            };
+
+            fetch('http://localhost:8081/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg);
+                if(msg === "Account Created Successfully!") {
+                    window.location.href = 'index.html'; // Wapas login bhej do
+                }
+            }).catch(err => console.error(err));
+        });
+    </script>
+</body>
+</html>

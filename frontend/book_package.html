@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Package - Travel Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f3f4f6; color: #333; }
+
+        /* Sidebar */
+        .sidebar { width: 250px; background-color: #1e293b; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
+        .sidebar-header { padding: 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #334155; }
+        .sidebar-menu { flex: 1; padding-top: 10px; }
+        .sidebar-menu a { display: block; padding: 15px 20px; color: #cbd5e1; text-decoration: none; font-size: 15px; border-left: 4px solid transparent; transition: 0.2s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: #334155; color: #ffffff; border-left: 4px solid #3b82f6; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .top-navbar { background-color: #ffffff; padding: 15px 30px; border-bottom: 1px solid #e5e7eb; }
+        
+        /* Package Cards Layout */
+        .package-grid { display: flex; gap: 20px; padding: 30px; justify-content: center; }
+        .pkg-card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #e5e7eb; flex: 1; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .pkg-card h3 { font-size: 20px; margin-bottom: 15px; }
+        .pkg-card.gold h3 { color: #d97706; }
+        .pkg-card.silver h3 { color: #64748b; }
+        .pkg-card.bronze h3 { color: #b45309; }
+        .pkg-price { font-size: 28px; font-weight: bold; margin-bottom: 15px; color: #111827; }
+        
+        /* Form Section */
+        .form-section { background: white; margin: 0 30px 30px 30px; padding: 30px; border-radius: 8px; border: 1px solid #e5e7eb; display: flex; gap: 20px;}
+        .input-group { flex: 1; display: flex; flex-direction: column; }
+        .input-group label { font-size: 13px; color: #4b5563; font-weight: 600; margin-bottom: 5px; }
+        .input-group input, .input-group select { padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
+        
+        .btn-submit { background-color: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; align-self: flex-end; height: 40px;}
+        .btn-submit:hover { background-color: #059669; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">Wanderlust Admin</div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="view_customers.html">👥 Manage Customers</a>
+            <a href="book_hotel.html">🏨 Book Hotels</a>
+            <a href="book_package.html" class="active">🎒 Tour Packages</a>
+            <a href="view_bookings.html" class="active">📄 View All Bookings</a>
+            <a href="route_optimizer.html">🗺️ Smart Route Optimizer</a>
+            <a href="payments.html" class="active">💳 Payments</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-navbar">
+            <h2 style="font-size: 20px; color: #111827;">Book Tour Package</h2>
+        </div>
+
+        <div class="package-grid">
+            <div class="pkg-card gold">
+                <h3>Gold Package</h3>
+                <div class="pkg-price">₹ 32,000</div>
+                <p style="color: #6b7280; font-size: 14px;">6 Days / 5 Nights<br>Airport Pickup, AC Room, Guide</p>
+            </div>
+            <div class="pkg-card silver">
+                <h3>Silver Package</h3>
+                <div class="pkg-price">₹ 24,000</div>
+                <p style="color: #6b7280; font-size: 14px;">5 Days / 4 Nights<br>Railway Pickup, AC Room</p>
+            </div>
+            <div class="pkg-card bronze">
+                <h3>Bronze Package</h3>
+                <div class="pkg-price">₹ 12,000</div>
+                <p style="color: #6b7280; font-size: 14px;">4 Days / 3 Nights<br>Non-AC Room, No Pickup</p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter username" required>
+            </div>
+            <div class="input-group">
+                <label>Select Package</label>
+                <select id="packageSelect" onchange="updatePrice()">
+                    <option value="Gold">Gold Package</option>
+                    <option value="Silver">Silver Package</option>
+                    <option value="Bronze">Bronze Package</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Total Persons</label>
+                <input type="number" id="persons" value="1" min="1" onchange="updatePrice()" required>
+            </div>
+            <div class="input-group">
+                <label>Total Price (₹)</label>
+                <input type="text" id="displayPrice" value="32000" readonly style="background-color: #f3f4f6; font-weight: bold;">
+            </div>
+            <button class="btn-submit" onclick="bookPackage()">Confirm Booking</button>
+        </div>
+    </div>
+
+    <script>
+        function updatePrice() {
+            const pkg = document.getElementById('packageSelect').value;
+            const persons = parseInt(document.getElementById('persons').value) || 1;
+            let cost = 0;
+            
+            if (pkg === 'Gold') cost = 32000;
+            else if (pkg === 'Silver') cost = 24000;
+            else if (pkg === 'Bronze') cost = 12000;
+
+            document.getElementById('displayPrice').value = cost * persons;
+        }
+
+        function bookPackage() {
+            const data = {
+                username: document.getElementById('username').value,
+                packageName: document.getElementById('packageSelect').value,
+                persons: document.getElementById('persons').value,
+                totalPrice: document.getElementById('displayPrice').value
+            };
+
+            if(!data.username) {
+                alert("Please enter a username!");
+                return;
+            }
+
+            fetch('http://localhost:8081/api/packages/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.text())
+            .then(msg => {
+                alert(msg);
+                document.getElementById('username').value = '';
+                document.getElementById('persons').value = '1';
+                updatePrice();
+            })
+            .catch(err => console.error('Error:', err));
+        }
+    </script>
+</body>
+</html>

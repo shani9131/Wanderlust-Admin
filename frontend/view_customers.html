@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Customers - Travel Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f3f4f6; color: #333; }
+
+        .sidebar { width: 250px; background-color: #1e293b; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
+        .sidebar-header { padding: 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #334155; }
+        .sidebar-menu { flex: 1; padding-top: 10px; }
+        .sidebar-menu a { display: block; padding: 15px 20px; color: #cbd5e1; text-decoration: none; font-size: 15px; border-left: 4px solid transparent; transition: 0.2s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: #334155; color: #ffffff; border-left: 4px solid #3b82f6; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .top-navbar { background-color: #ffffff; padding: 15px 30px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+        .top-navbar h2 { font-size: 20px; color: #111827; }
+
+        .table-container { background: #ffffff; margin: 30px; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .btn-add { background-color: #10b981; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 600; }
+        .btn-add:hover { background-color: #059669; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        th { color: #6b7280; font-weight: 600; background-color: #f9fafb; }
+        td { color: #374151; }
+        tr:hover { background-color: #f9fafb; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">Wanderlust Admin</div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="view_customers.html" class="active">👥 Manage Customers</a>
+            <a href="book_hotel.html">🏨 Book Hotels</a>
+            <a href="book_package.html">🎒 Tour Packages</a>
+            <a href="view_bookings.html" class="active">📄 View All Bookings</a>
+            <a href="route_optimizer.html">🗺️ Smart Route Optimizer</a>
+            <a href="payments.html" class="active">💳 Payments</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-navbar">
+            <h2>Customer Directory</h2>
+        </div>
+
+        <div class="table-container">
+            <div class="header-action">
+                <h3>All Registered Customers</h3>
+                <a href="add_customer.html" class="btn-add">+ Add New Customer</a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>ID Type</th>
+                        <th>ID Number</th>
+                        <th>Gender</th>
+                        <th>Country</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 1. Backend API (Port 8081) se data mangwana
+        fetch('http://localhost:8081/api/customers/all')
+            .then(response => response.json()) // JSON format me convert karna
+            .then(data => {
+                const tableBody = document.getElementById('customerTableBody');
+                
+                // 2. Har ek customer ke liye HTML table row (<tr>) banana
+                data.forEach(customer => {
+                    const row = `
+                        <tr>
+                            <td><strong>${customer.username}</strong></td>
+                            <td>${customer.name}</td>
+                            <td>${customer.id_type}</td>
+                            <td>${customer.number}</td>
+                            <td>${customer.gender}</td>
+                            <td>${customer.country}</td>
+                            <td>${customer.phone}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row; // Row ko table ke andar add kar dena
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching customers:', error);
+                document.getElementById('customerTableBody').innerHTML = "<tr><td colspan='7'>Failed to load data from server.</td></tr>";
+            });
+    </script>
+</body>
+</html>

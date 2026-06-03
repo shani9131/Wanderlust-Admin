@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Route Optimizer - Travel Admin</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f3f4f6; color: #333; }
+
+        /* Same Professional Sidebar */
+        .sidebar { width: 250px; background-color: #1e293b; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; z-index: 1000; }
+        .sidebar-header { padding: 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #334155; }
+        .sidebar-menu { flex: 1; padding-top: 10px; }
+        .sidebar-menu a { display: block; padding: 15px 20px; color: #cbd5e1; text-decoration: none; font-size: 15px; border-left: 4px solid transparent; transition: 0.2s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: #334155; color: #ffffff; border-left: 4px solid #3b82f6; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .top-navbar { background-color: #ffffff; padding: 15px 30px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; z-index: 10;}
+        
+        .control-panel { background: white; padding: 20px 30px; display: flex; gap: 20px; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); z-index: 10;}
+        .control-panel select { padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; width: 300px; outline: none; }
+        .btn-fly { background-color: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-fly:hover { background-color: #059669; }
+
+        /* The Map Container */
+        #map { flex: 1; width: 100%; background: #e5e5e5; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">Wanderlust Admin</div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="view_customers.html">👥 Manage Customers</a>
+            <a href="book_hotel.html">🏨 Book Hotels</a>
+            <a href="book_package.html">🎒 Tour Packages</a>
+            <a href="view_bookings.html" class="active">📄 View All Bookings</a>
+            <a href="route_optimizer.html" class="active">🗺️ Smart Route Optimizer</a>
+            <a href="payments.html" class="active">💳 Payments</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-navbar">
+            <h2 style="font-size: 20px; color: #111827;">AI Map & Route Viewer</h2>
+        </div>
+
+        <div class="control-panel">
+            <h3 style="font-size: 15px; color: #4b5563;">Select Destination:</h3>
+            <select id="destinationSelect">
+                <option value="" disabled selected>Explore Incredible India...</option>
+                
+                <optgroup label="Mountains & Valleys">
+                    <option value="manali">Manali, Himachal Pradesh</option>
+                    <option value="srinagar">Srinagar, Jammu & Kashmir</option>
+                    <option value="munnar">Munnar, Kerala</option>
+                    <option value="rishikesh">Rishikesh, Uttarakhand</option>
+                </optgroup>
+
+                <optgroup label="Historical Heritage">
+                    <option value="tajmahal">Taj Mahal, Agra</option>
+                    <option value="fatehpursikri">Fatehpur Sikri, UP</option>
+                    <option value="humayunstomb">Humayun's Tomb, Delhi</option>
+                    <option value="jaipur">Hawa Mahal, Jaipur</option>
+                </optgroup>
+
+                <optgroup label="Beaches & Coastal">
+                    <option value="goa">Baga Beach, Goa</option>
+                    <option value="andaman">Havelock Island, Andaman</option>
+                    <option value="varkala">Varkala Cliff, Kerala</option>
+                </optgroup>
+
+                <optgroup label="Metropolitan Charm">
+                    <option value="mumbai">Gateway of India, Mumbai</option>
+                    <option value="kolkata">Victoria Memorial, Kolkata</option>
+                </optgroup>
+            </select>
+            <button class="btn-fly" onclick="flyToDestination()">Launch Map Animation 🚀</button>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // 1. Map ko initialize karna (India ke center par set kiya hai)
+        var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        // 2. OpenStreetMap ka live layer add karna
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // 3. Destinations ke exact Latitude aur Longitude
+        // 3. Destinations ke exact Latitude aur Longitude
+        const locations = {
+            // Mountains
+            'manali': { lat: 32.2396, lng: 77.1887, title: "Manali", desc: "Beautiful mountains and snow." },
+            'srinagar': { lat: 34.0837, lng: 74.7973, title: "Dal Lake, Srinagar", desc: "The crown jewel of Kashmir." },
+            'munnar': { lat: 10.0889, lng: 77.0595, title: "Munnar", desc: "Lush green tea gardens." },
+            'rishikesh': { lat: 30.0869, lng: 78.2676, title: "Rishikesh", desc: "Yoga capital and Ganges river rafting." },
+            
+            // Historical Heritage
+            'tajmahal': { lat: 27.1751, lng: 78.0421, title: "Taj Mahal", desc: "Symbol of eternal love in Agra." },
+            'fatehpursikri': { lat: 27.0945, lng: 77.6679, title: "Fatehpur Sikri", desc: "The magnificent 16th-century Mughal capital built by Emperor Akbar." },
+            'humayunstomb': { lat: 28.5933, lng: 77.2507, title: "Humayun's Tomb", desc: "A stunning architectural marvel and precursor to the Taj Mahal." },
+            'jaipur': { lat: 26.9239, lng: 75.8267, title: "Hawa Mahal, Jaipur", desc: "The iconic Palace of Winds." },
+            
+            // Beaches
+            'goa': { lat: 15.5523, lng: 73.7517, title: "Baga Beach", desc: "Party, beaches, and sunset in Goa." },
+            'andaman': { lat: 11.9761, lng: 92.9876, title: "Havelock Island", desc: "Crystal clear water and white sands." },
+            'varkala': { lat: 8.7356, lng: 76.7032, title: "Varkala Cliff", desc: "Stunning cliffs right next to the Arabian Sea." },
+            
+            // Metros
+            'mumbai': { lat: 18.9220, lng: 72.8347, title: "Gateway of India", desc: "The historic arch monument in Mumbai." },
+            'kolkata': { lat: 22.5448, lng: 88.3426, title: "Victoria Memorial", desc: "A massive marble building in Kolkata." }
+        };
+
+        let currentMarker = null;
+
+        // 4. Animation Function!
+        function flyToDestination() {
+            const destKey = document.getElementById('destinationSelect').value;
+            if (!destKey) {
+                alert("Please select a destination first!");
+                return;
+            }
+
+            const loc = locations[destKey];
+
+            // Map ko smoothly udha kar le jana (flyTo)
+            map.flyTo([loc.lat, loc.lng], 14, {
+                animate: true,
+                duration: 2.5 // 2.5 seconds ki smooth flight
+            });
+
+            // Purana marker hatana
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+            }
+
+            // Naya marker lagana animation ke aakhir mein
+            setTimeout(() => {
+                currentMarker = L.marker([loc.lat, loc.lng]).addTo(map)
+                    .bindPopup(`<b>${loc.title}</b><br>${loc.desc}`)
+                    .openPopup();
+            }, 2500); // Wait for the flight to finish before dropping the pin
+        }
+    </script>
+</body>
+</html>
