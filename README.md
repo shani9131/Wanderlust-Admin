@@ -32,3 +32,25 @@ an open-source mapping ecosystem.
    spring.datasource.username=root
    spring.datasource.password=your_password
    spring.jpa.hibernate.ddl-auto=update
+
+
+2. Running the Backend (Spring Boot)
+Ensure you have Java and Maven installed.
+
+Bash
+mvn spring-boot:run
+The backend server will start on http://localhost:8081.
+
+3. Running the Frontend
+Navigate to the frontend/ directory.
+
+Open index.html using Live Server in VS Code (or serve it on any local port like 5500).
+
+The application communicates with the backend via configured CORS mapping.
+
+📈 Future Enhancements
+Integration of Spring Security with BCrypt password hashing.
+
+Implementation of JWT (JSON Web Tokens) for stateless session management.
+
+Migration of the simulated payment gateway to a live Stripe/Razorpay test environment.
