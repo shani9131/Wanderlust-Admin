@@ -77,8 +77,8 @@
     </div>
 
     <script>
-        // 1. Backend API (Port 8081) se data mangwana
-        fetch('http://localhost:8081/api/customers/all')
+        // 1. Backend API  se data mangwana
+        fetch('https://wanderlust-admin.onrender.com/api/customers/all')
             .then(response => response.json()) // JSON format me convert karna
             .then(data => {
                 const tableBody = document.getElementById('customerTableBody');

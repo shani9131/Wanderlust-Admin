@@ -39,7 +39,7 @@ Ensure you have Java and Maven installed.
 
 Bash
 mvn spring-boot:run
-The backend server will start on http://localhost:8081.
+The backend server will start on https://wanderlust-admin.onrender.com.
 
 3. Running the Frontend
 Navigate to the frontend/ directory.

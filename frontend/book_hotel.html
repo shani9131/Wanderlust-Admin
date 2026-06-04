@@ -167,7 +167,7 @@
                 totalPrice: document.getElementById('displayPrice').innerText
             };
 
-            fetch('http://localhost:8081/api/hotels/book', {
+            fetch('https://wanderlust-admin.onrender.com/api/hotels/book', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookingData)

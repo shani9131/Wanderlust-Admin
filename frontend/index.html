@@ -87,7 +87,7 @@
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
 
-            fetch('http://localhost:8081/api/auth/login', {
+            fetch('https://wanderlust-admin.onrender.com/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: user, password: pass })

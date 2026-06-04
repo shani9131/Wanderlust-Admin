@@ -168,9 +168,9 @@
                 const username = document.getElementById('searchUser').value;
 
                 // Hotel ka payment status update karo
-                fetch(`http://localhost:8081/api/hotels/pay/${username}`, { method: 'PUT' });
+                fetch(`https://wanderlust-admin.onrender.com/api/hotels/pay/${username}`, { method: 'PUT' });
                 // Package ka payment status update karo
-                fetch(`http://localhost:8081/api/packages/pay/${username}`, { method: 'PUT' });
+                fetch(`https://wanderlust-admin.onrender.com/api/packages/pay/${username}`, { method: 'PUT' });
 
                 setTimeout(() => {
                     alert(`Transaction TXN${Math.floor(Math.random() * 900000)} Successful!\nStatus updated to CONFIRMED in database.`);

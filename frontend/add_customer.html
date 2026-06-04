@@ -137,8 +137,8 @@
                 email: document.getElementById('email').value
             };
 
-            // Backend ko request bhejna (Port 8081 use kar rahe hain)
-            fetch('http://localhost:8081/api/customers/add', {
+            // Backend ko request bhejna 
+            fetch('https://wanderlust-admin.onrender.com/api/customers/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(customerData)

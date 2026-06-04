@@ -99,7 +99,7 @@
 
     <script>
        // 1. Fetch Hotel Bookings
-        fetch('http://localhost:8081/api/hotels/all')
+        fetch('https://wanderlust-admin.onrender.com/api/hotels/all')
             .then(res => res.json())
             .then(data => {
                 const tbody = document.getElementById('hotelTableBody');
@@ -134,7 +134,7 @@
             }).catch(err => console.error('Hotel Fetch Error:', err));
 
        // 2. Fetch Package Bookings
-        fetch('http://localhost:8081/api/packages/all')
+        fetch('https://wanderlust-admin.onrender.com/api/packages/all')
             .then(res => res.json())
             .then(data => {
                 const tbody = document.getElementById('packageTableBody');
