@@ -2,7 +2,9 @@
 
 > A decoupled, full-stack B2B Customer Relationship Management (CRM) portal designed for travel agencies to manage user bookings, optimize tour routes, and process asynchronous payments.
 
+# Wanderlust Admin - Travel Management System ✈️
 
+🌍 **Live Demo:** [wanderlust-admin.vercel.app](https://wanderlust-admin.vercel.app)
 
 ## 🚀 Overview
 Wanderlust Admin is engineered keeping **Enterprise-Level System Architecture** in mind. Moving away from traditional monolithic desktop applications, this system utilizes a strict
@@ -17,9 +19,9 @@ an open-source mapping ecosystem.
 * **Relational Database Mapping:** Complex object-relational mapping (ORM) handling multiple entities (Accounts, Hotel Bookings, Package Bookings) using Spring Data JPA.
 
 ## 💻 Tech Stack
-* **Frontend:** HTML5, CSS3, Vanilla JavaScript (Fetch API, DOM Manipulation)
-* **Backend:** Java, Spring Boot, Spring Web, RESTful Services
-* **Database & ORM:** MySQL, Spring Data JPA, Hibernate
+* **Frontend:** HTML5, CSS3, Vanilla JavaScript (Fetch API, DOM Manipulation)  (Deployed on **Vercel**)
+* **Backend:** Java, Spring Boot, Docker (Deployed as a containerized Web Service on **Render**) ,Spring Web, RESTful Services
+* **Database & ORM:** MySQL, Spring Data JPA, Hibernate, (Hosted securely on **Aiven Cloud**)
 * **Third-Party Integrations:** Leaflet.js (Open-Source Maps)
 
 ## ⚙️ Local Setup & Installation
